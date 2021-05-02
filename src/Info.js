@@ -22,7 +22,7 @@ function Info({stockSymbol}) {
 
     }
 
-    //fetchData();
+    fetchData();
   },[stockSymbol]);
 
 
