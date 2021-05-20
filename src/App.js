@@ -7,7 +7,7 @@ import Trade from "./Trade"
 import Purchases from "./Purchases"
 import AddStock from "./AddStock"
 
-function App() {
+function App({setNav}) {
   const [stockList,setStockList] = useState(stocks);
   const [stockSymbol,setStockSymbol] = useState("TSLA");
   const [graphType,setGraphType] = useState(false);
@@ -48,7 +48,8 @@ function App() {
   
   return (
     <main>
-      <h1>Stocks</h1>
+      <button className="backButton" type="button" onClick={() => setNav("Home")}> ← Back to Website</button> 
+      <h1 style={{'text-align':'center'}}>Stocks</h1>
       <Purchases stockSymbol={stockSymbol} currentPrice={currentPrice} purchases={purchases} setPurchases={setPurchases} />
       {stockList.map((stock) => {
         const {id,name,symbol} = stock;
