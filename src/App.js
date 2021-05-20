@@ -4,42 +4,70 @@ import Form from "./Form"
 import Chart from "./Chart"
 import Info from "./Info"
 import Trade from "./Trade"
+import Purchases from "./Purchases"
+import AddStock from "./AddStock"
 
 function App() {
+  const [stockList,setStockList] = useState(stocks);
   const [stockSymbol,setStockSymbol] = useState("TSLA");
-  const [gran,setGran] = useState("1min");
   const [graphType,setGraphType] = useState(false);
   const [sma,setSMA] = useState(false);
   const [smaInputs,setSMAInputs] = useState({short:0,long:0});
   const [sr,setSR] = useState(false);
+  const [currentPrice, setCurrentPrice] = useState("");
   const [purchases,setPurchases] = useState([{id: "123435467", symbol:"AMZN", amount:"15", current:"3647",totalPrice:"54705"},{id: "123435317", symbol:"AAPL", amount:"20", current:"131",totalPrice:"2620"}]);
-  const [totalProfit, setTotalProfit] = useState(0);
 
   useEffect(() => {
     setSMA(false);
-    setGran("1min");
     setSR(false);
+
+    const getCurrentPrice = (data) => {
+      let latest = data["Time Series (1min)"][Object.keys(data["Time Series (1min)"])[0]];
+      setCurrentPrice(parseFloat(latest["4. close"]).toFixed(2));
+    }
+    const fetchData = async () => {
+      try {
+        const API_KEY = "91CZUFQR4BCV8NIV";
+        let url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=1min&apikey=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        getCurrentPrice(data);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+    fetchData();
+    const interval=setInterval(()=>{
+      fetchData();
+    },60000);  
+
+    return () => clearInterval(interval);
+
   },[stockSymbol])
 
   
   return (
     <main>
       <h1>Stocks</h1>
-      {stocks.map((stock) => {
+      <Purchases stockSymbol={stockSymbol} currentPrice={currentPrice} purchases={purchases} setPurchases={setPurchases} />
+      {stockList.map((stock) => {
         const {id,name,symbol} = stock;
         return (<section key={`${id}-stock`} >
+          <div className="companyMenu">
+          <button className="companyButton" type="btn" onClick={()=>setStockSymbol(symbol)}>{stockSymbol === symbol ? "-" : "+"}</button>
           <h2>{name} {symbol}</h2>
-          <button type="btn" onClick={()=>setStockSymbol(symbol)}>{stockSymbol === symbol ? "-" : "+"}</button>
+          </div>
           {stockSymbol === symbol ? 
           <div>
-            <Trade stockSymbol={stockSymbol} purchases={purchases} setPurchases={setPurchases} totalProfit={totalProfit} setTotalProfit={setTotalProfit} />
-            <Info stockSymbol={stockSymbol}/>
-            <Form setGran={setGran} graphType={graphType} setGraphType={setGraphType} sma={sma} setSMA={setSMA} smaInputs={smaInputs} setSMAInputs={setSMAInputs} sr={sr} setSR={setSR} /> 
-            <Chart stockSymbol={stockSymbol} gran={gran} graphType={graphType} sma={sma} smaInputs={smaInputs} sr={sr}/>
+            <Trade stockSymbol={stockSymbol} purchases={purchases} setPurchases={setPurchases} currentPrice={currentPrice} />
+            <Info stockSymbol={stockSymbol} currentPrice={currentPrice}/>
+            <Form graphType={graphType} setGraphType={setGraphType} sma={sma} setSMA={setSMA} smaInputs={smaInputs} setSMAInputs={setSMAInputs} sr={sr} setSR={setSR} /> 
+            <Chart stockSymbol={stockSymbol} graphType={graphType} sma={sma} smaInputs={smaInputs} sr={sr}/>
           </div> 
           : <></> }
         </section>);
       })} 
+      <AddStock stockList={stockList} setStockList={setStockList}/>
     </main>
   );
 }
