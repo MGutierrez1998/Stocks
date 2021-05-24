@@ -1,23 +1,9 @@
-import React, {useState, useEffect}from 'react';
+import React, {useState}from 'react';
 import App from './App';
 import Company from './Company';
 
-const getLocalStorage = () => {
-  let purchases = localStorage.getItem('purchases');
-  if(purchases){
-    return JSON.parse(localStorage.getItem('purchases'));
-  }else{
-    return [];
-  }
-}
-
 function Website() {
   const [nav,setNav] = useState("Home");
-  const [purchases,setPurchases] = useState(getLocalStorage());
-
-  useEffect(()=>{
-    localStorage.setItem('purchases',JSON.stringify(purchases));
-  },[purchases])
 
   return (nav === "Home" ?
   <div>
@@ -120,7 +106,7 @@ function Website() {
         <br></br>
         </div>
       </div>
-    : nav === "App" ? <App setNav={setNav} purchases={purchases} setPurchases={setPurchases} />
+    : nav === "App" ? <App setNav={setNav} />
     : nav === "Company" ? <Company setNav={setNav} />
     :<></>
     );

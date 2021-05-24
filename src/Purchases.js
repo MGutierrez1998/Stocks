@@ -1,13 +1,18 @@
 import React, {useState} from 'react'
 
-function Purchases({stockSymbol, currentPrice, purchases, setPurchases}) {
+function Purchases({stockSymbol,currentPrice,purchases,setPurchases}) {
   const [totalProfit, setTotalProfit] = useState(0);
   const [showPurchase, setShowPurchase] = useState(false);
 
-  const resolvePurchase = (id,symbol,amount,current) => {
+  const resolvePurchase = (id,type,symbol,amount,current) => {
     if(symbol === stockSymbol) {
       const updatePurchases = purchases.filter((purchase) => purchase.id !== id);
-      let profit = ((parseFloat(currentPrice) * amount) - (current * amount)) + totalProfit;
+      let profit = 0;
+      if(type === "Buy"){
+        profit = ((parseFloat(currentPrice) * amount) - (current * amount)) + totalProfit;
+      }else{
+        profit = ((current * amount) - (parseFloat(currentPrice) * amount)) + totalProfit;
+      }
       setTotalProfit(profit);
       setPurchases(updatePurchases);
     }
@@ -22,13 +27,14 @@ function Purchases({stockSymbol, currentPrice, purchases, setPurchases}) {
     {showPurchase &&
     <div className="purchasedBox">
     {purchases.map((purchase)=>{
-        const {id,symbol,amount,current,totalPrice} = purchase;
+        const {id,type,symbol,amount,current,totalPrice} = purchase;
         return ( <section className="purchasedItem" key={id} id={id}>
           <h4>{symbol}<br/>
+          Type: {type}<br/>
           Quanity: {amount}<br/>
           Bought at: ${current}<br/>
           Total: ${totalPrice}</h4>
-          <button className="exitButton" type="button" onClick={() => resolvePurchase(id,symbol,amount,current)}>Exit Position</button>
+          <button className="exitButton" type="button" onClick={() => resolvePurchase(id,type,symbol,amount,current)}>Close</button>
         </section> );
         })}
     </div>}

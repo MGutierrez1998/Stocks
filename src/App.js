@@ -7,7 +7,16 @@ import Trade from "./Trade"
 import Purchases from "./Purchases"
 import AddStock from "./AddStock"
 
-function App({setNav,purchases,setPurchases}) {
+const getLocalStorage = () => {
+  let purchases = localStorage.getItem('purchases');
+  if(purchases){
+    return JSON.parse(localStorage.getItem('purchases'));
+  }else{
+    return [];
+  }
+}
+
+function App({setNav}) {
   const [stockList,setStockList] = useState(stocks);
   const [stockSymbol,setStockSymbol] = useState("TSLA");
   const [graphType,setGraphType] = useState(false);
@@ -15,10 +24,16 @@ function App({setNav,purchases,setPurchases}) {
   const [smaInputs,setSMAInputs] = useState({short:0,long:0});
   const [sr,setSR] = useState(false);
   const [currentPrice, setCurrentPrice] = useState("");
+  const [purchases,setPurchases] = useState(getLocalStorage());
+
+  useEffect(()=>{
+    localStorage.setItem('purchases',JSON.stringify(purchases));
+  },[purchases])
 
   useEffect(() => {
     setSMA(false);
     setSR(false);
+    setCurrentPrice(0);
 
     const getCurrentPrice = (data) => {
       let latest = data["Time Series (1min)"][Object.keys(data["Time Series (1min)"])[0]];
