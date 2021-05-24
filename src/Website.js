@@ -1,10 +1,23 @@
-import React, {useState}from 'react';
+import React, {useState, useEffect}from 'react';
 import App from './App';
 import Company from './Company';
 
+const getLocalStorage = () => {
+  let purchases = localStorage.getItem('purchases');
+  if(purchases){
+    return JSON.parse(localStorage.getItem('purchases'));
+  }else{
+    return [];
+  }
+}
+
 function Website() {
   const [nav,setNav] = useState("Home");
-  const [purchases,setPurchases] = useState([{id: "123435467", symbol:"AMZN", amount:"15", current:"3647",totalPrice:"54705"},{id: "123435317", symbol:"AAPL", amount:"20", current:"131",totalPrice:"2620"}]);
+  const [purchases,setPurchases] = useState(getLocalStorage());
+
+  useEffect(()=>{
+    localStorage.setItem('purchases',JSON.stringify(purchases));
+  },[purchases])
 
   return (nav === "Home" ?
   <div>
