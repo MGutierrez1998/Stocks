@@ -4,6 +4,7 @@ import Company from './Company';
 
 function Website() {
   const [nav,setNav] = useState("Home");
+  const [purchases,setPurchases] = useState([{id: "123435467", symbol:"AMZN", amount:"15", current:"3647",totalPrice:"54705"},{id: "123435317", symbol:"AAPL", amount:"20", current:"131",totalPrice:"2620"}]);
 
   return (nav === "Home" ?
   <div>
@@ -106,7 +107,7 @@ function Website() {
         <br></br>
         </div>
       </div>
-    : nav === "App" ? <App setNav={setNav} />
+    : nav === "App" ? <App setNav={setNav} purchases={purchases} setPurchases={setPurchases} />
     : nav === "Company" ? <Company setNav={setNav} />
     :<></>
     );

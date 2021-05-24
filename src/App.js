@@ -7,7 +7,7 @@ import Trade from "./Trade"
 import Purchases from "./Purchases"
 import AddStock from "./AddStock"
 
-function App({setNav}) {
+function App({setNav,purchases,setPurchases}) {
   const [stockList,setStockList] = useState(stocks);
   const [stockSymbol,setStockSymbol] = useState("TSLA");
   const [graphType,setGraphType] = useState(false);
@@ -15,7 +15,6 @@ function App({setNav}) {
   const [smaInputs,setSMAInputs] = useState({short:0,long:0});
   const [sr,setSR] = useState(false);
   const [currentPrice, setCurrentPrice] = useState("");
-  const [purchases,setPurchases] = useState([{id: "123435467", symbol:"AMZN", amount:"15", current:"3647",totalPrice:"54705"},{id: "123435317", symbol:"AAPL", amount:"20", current:"131",totalPrice:"2620"}]);
 
   useEffect(() => {
     setSMA(false);
