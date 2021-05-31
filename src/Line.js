@@ -8,7 +8,7 @@ function Line({stockData,sma,smaSignal,sr,srLines}) {
             y: stockData.close,
             type: 'scatter',
             mode: 'lines+markers',
-            marker: {color: 'red'},
+            marker: {color: '#156CE2'},
           },
           (sma ? {
             x: stockData.time, 
@@ -34,28 +34,28 @@ function Line({stockData,sma,smaSignal,sr,srLines}) {
             y: Array(stockData.time.length).fill(srLines.R1),
             mode: 'lines',
             name: 'Resistance 1',
-            marker: {color: 'green'},
+            marker: {color: '#57D26C'},
           } : {}),
           (sr ? {
             x: stockData.time,
             y: Array(stockData.time.length).fill(srLines.S1),
             mode: 'lines',
             name: 'Support 1',
-            marker: {color: 'green'},
+            marker: {color: '#57D26C'},
           } : {}),
           (sr ? {
             x: stockData.time,
             y: Array(stockData.time.length).fill(srLines.R2),
             mode: 'lines',
             name: 'Resistance 2',
-            marker: {color: 'green'},
+            marker: {color: '#57D26C'},
           } : {}),
           (sr ? {
             x: stockData.time,
             y: Array(stockData.time.length).fill(srLines.S2),
             mode: 'lines',
             name: 'Support 2',
-            marker: {color: 'green'},
+            marker: {color: '#57D26C'},
           } : {}),
         ]}
         layout={ {width: 1000, height: 600} }/>

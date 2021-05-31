@@ -2,11 +2,10 @@ import React, { useState, useEffect} from 'react'
 import Line from "./Line"
 import Candle from "./Candle"
 
-function Chart({stockSymbol, graphType, sma, smaInputs, sr}) {
+function Chart({stockSymbol, graphType, sma, smaInputs, sr, srLines, setSRLines}) {
   
   const [stockData, setStockData] = useState({open:[],high:[],low:[],close:[],volume:[],time:[]});
   const [smaSignal,setSMASignal] = useState([]);
-  const [srLines,setSRLines] = useState({R1:0,S1:0,R2:0,S2:0});
 
   useEffect(() => {
     const parseData = (data) => {
@@ -37,13 +36,13 @@ function Chart({stockSymbol, graphType, sma, smaInputs, sr}) {
         }
       } 
 
-      let PP = (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) + parseFloat(data[`Time Series (Daily)`][key]["3. low"]) + parseFloat(data[`Time Series (Daily)`][key]["4. close"]))/3;
-      let Resistance1 = (2 * PP) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]);
-      let Support1 = (2 * PP) - parseFloat(data[`Time Series (Daily)`][key]["2. high"]);
-      let Resistance2 = PP + (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]));
-      let Support2 =  PP - (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]));
+      let PivotPoint = (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) + parseFloat(data[`Time Series (Daily)`][key]["3. low"]) + parseFloat(data[`Time Series (Daily)`][key]["4. close"]))/3;
+      let Resistance1 = (2 * PivotPoint) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]);
+      let Support1 = (2 * PivotPoint) - parseFloat(data[`Time Series (Daily)`][key]["2. high"]);
+      let Resistance2 = PivotPoint + (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]));
+      let Support2 =  PivotPoint - (parseFloat(data[`Time Series (Daily)`][key]["2. high"]) - parseFloat(data[`Time Series (Daily)`][key]["3. low"]));
 
-      setSRLines({R1:Resistance1,S1:Support1,R2:Resistance2,S2:Support2});
+      setSRLines({PP:PivotPoint,R1:Resistance1,S1:Support1,R2:Resistance2,S2:Support2});
     }
 
     const fetchData = async () => {
@@ -60,7 +59,7 @@ function Chart({stockSymbol, graphType, sma, smaInputs, sr}) {
     }
 
     fetchData();
-  },[stockSymbol]);
+  },[stockSymbol,setSRLines]);
 
   useEffect(() => {
     const avg = (values) => {

@@ -25,6 +25,7 @@ function App({setNav}) {
   const [sr,setSR] = useState(false);
   const [currentPrice, setCurrentPrice] = useState("");
   const [purchases,setPurchases] = useState(getLocalStorage());
+  const [srLines,setSRLines] = useState({R1:0,S1:0,R2:0,S2:0});
 
   useEffect(()=>{
     localStorage.setItem('purchases',JSON.stringify(purchases));
@@ -61,7 +62,7 @@ function App({setNav}) {
 
   
   return (
-    <main>
+    <div>
       <button className="backButton" type="button" onClick={() => setNav("Home")}> ← Back to Website</button> 
       <h1 style={{'text-align':'center'}}>Stocks</h1>
       <Purchases stockSymbol={stockSymbol} currentPrice={currentPrice} purchases={purchases} setPurchases={setPurchases} />
@@ -74,16 +75,16 @@ function App({setNav}) {
           </div>
           {stockSymbol === symbol ? 
           <div>
-            <Trade stockSymbol={stockSymbol} purchases={purchases} setPurchases={setPurchases} currentPrice={currentPrice} />
+            <Trade stockSymbol={stockSymbol} purchases={purchases} setPurchases={setPurchases} currentPrice={currentPrice} srLines={srLines} />
             <Info stockSymbol={stockSymbol} currentPrice={currentPrice}/>
             <Form graphType={graphType} setGraphType={setGraphType} sma={sma} setSMA={setSMA} smaInputs={smaInputs} setSMAInputs={setSMAInputs} sr={sr} setSR={setSR} /> 
-            <Chart stockSymbol={stockSymbol} graphType={graphType} sma={sma} smaInputs={smaInputs} sr={sr}/>
+            <Chart stockSymbol={stockSymbol} graphType={graphType} sma={sma} smaInputs={smaInputs} sr={sr} srLines={srLines} setSRLines={setSRLines} />
           </div> 
           : <></> }
         </section>);
       })} 
       <AddStock stockList={stockList} setStockList={setStockList}/>
-    </main>
+    </div>
   );
 }
 
