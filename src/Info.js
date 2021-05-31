@@ -6,7 +6,7 @@ function Info({stockSymbol, currentPrice}) {
   const [companyData,setCompanyData] = useState({});
   const [fairVal,setFairVal] = useState("");
   const infoType = ["PEGRatio","BookValue", "EPS","PriceToSalesRatioTTM","PriceToBookRatio","EVToRevenue","ShortRatio","QuarterlyEarningsGrowthYOY","QuarterlyRevenueGrowthYOY"];
-  const otherInfoType = ["RevenuePerShareTTM","AnalystTargetPrice","TrailingPE","ForwardPE","EVToEBITDA","52WeekHigh","52WeekLow","50DayMovingAverage","200DayMovingAverage"];
+  const otherInfoType = ["PERatio","RevenuePerShareTTM","AnalystTargetPrice","TrailingPE","ForwardPE","EVToEBITDA","52WeekHigh","52WeekLow","50DayMovingAverage","200DayMovingAverage"];
 
   useEffect(() => {
 
