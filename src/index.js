@@ -1,9 +1,9 @@
 const { useState, useEffect, Component } = React
-const headers = {
-    'X-RapidAPI-Host': 'coinranking1.p.rapidapi.com',
-    'X-RapidAPI-Key': '6c73651023mshefc6b2687a9f85bp1c06dfjsn583821826583',
-}
-const COIN_RANKING_API = 'https://coinranking1.p.rapidapi.com'
+// const headers = {
+//     'X-RapidAPI-Host': 'coinranking1.p.rapidapi.com',
+//     'X-RapidAPI-Key': '6c73651023mshefc6b2687a9f85bp1c06dfjsn583821826583',
+// }
+// const COIN_RANKING_API = 'https://coinranking1.p.rapidapi.com'
 
 class Strategy {
     static instance
