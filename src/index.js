@@ -1,6 +1,9 @@
 const { useState, useEffect, Component } = React
-const COIN_RANKING_API =
-    'coinrankingce87815302bc4252c5977adaaeb004826af828e72cefa0dc'
+const headers = {
+    'X-RapidAPI-Host': 'coinranking1.p.rapidapi.com',
+    'X-RapidAPI-Key': '6c73651023mshefc6b2687a9f85bp1c06dfjsn583821826583',
+}
+const COIN_RANKING_API = 'https://coinranking1.p.rapidapi.com'
 
 class Strategy {
     static instance
@@ -176,24 +179,38 @@ const Graph = () => {
     // get the Coin and Currency data for Graph config fields
     useEffect(() => {
         const getFieldData = async () => {
-            const data = await fetch(
-                `https://api.coinranking.com/v2/coins?limit=${100}`,
-                { headers: { 'x-access-token': COIN_RANKING_API } }
-            )
-            console.log(data)
+            const data = await Promise.all([
+                fetch(`${COIN_RANKING_API}/coins?limit=${100}`, {
+                    headers,
+                })
+                    .then((content) => content.json())
+                    .then(({ data: { coins: content } }) => {
+                        const coinsData = {}
+                        content.forEach(({ uuid, name, symbol }) => {
+                            coinsData[`${name}`] = { symbol, uuid }
+                        })
+                        return coinsData
+                    }),
+                fetch(
+                    `${COIN_RANKING_API}/reference-currencies?limit=${100}&type=fiat`,
+                    {
+                        headers,
+                    }
+                )
+                    .then((content) => content.json())
+                    .then(({ data: { currencies: content } }) => {
+                        const currenciesData = {}
+                        content.forEach(({ uuid, name, symbol }) => {
+                            currenciesData[`${name}`] = { symbol, uuid }
+                        })
+                        return currenciesData
+                    }),
+            ])
+
+            setCoins(data[0])
+            setCurrencies(data[1])
         }
         getFieldData()
-
-        // const getFieldData = async () => {
-        //     const data = await Promise.all([
-        //         fetch('/coins').then((res) => res.json()),
-        //         fetch('/currencies').then((res) => res.json()),
-        //     ])
-
-        //     setCoins(data[0])
-        //     setCurrencies(data[1])
-        // }
-        // getFieldData()
     }, [])
 
     // load the options for the Coin and Currency data for Graph config fields
@@ -222,17 +239,46 @@ const Graph = () => {
 
     // short polling data
     useEffect(() => {
-        const refetchData = async () => {
-            const request = await fetch(`/olhc/${coin}/${currency}/${period}`)
-            const response = await request.json()
-            setCoinData(response)
+        if (coinCurrencyPair !== '') {
+            const refetchData = async () => {
+                const data = await fetch(
+                    `${COIN_RANKING_API}/coin/${coin}/ohlc?referenceCurrencyUuid=${currency}&interval=${period}&limit=${100}`,
+                    {
+                        headers,
+                    }
+                )
+                    .then((content) => content.json())
+                    .then(({ data: { ohlc } }) => {
+                        let obj = {
+                            x: [],
+                            close: [],
+                            high: [],
+                            low: [],
+                            open: [],
+                        }
+                        ohlc.slice()
+                            .reverse()
+                            .forEach(
+                                ({ startingAt, open, high, low, close }) => {
+                                    obj.x.push(new Date(+startingAt * 1000))
+                                    obj.open.push(+open)
+                                    obj.high.push(+high)
+                                    obj.low.push(+low)
+                                    obj.close.push(+close)
+                                }
+                            )
+                        return obj
+                    })
+                setCoinData(data)
+            }
+
+            const interval = setInterval(() => {
+                refetchData()
+                console.log('get new data')
+            }, 60 * 1000)
+
+            return () => clearInterval(interval)
         }
-
-        const interval = setInterval(() => {
-            refetchData()
-        }, 60 * 1000)
-
-        return () => clearInterval(interval)
     }, [coinCurrencyPair])
 
     const searchName = (obj, uuid) =>
@@ -307,9 +353,27 @@ const Graph = () => {
         )
 
         const getHistoricData = async () => {
-            const request = await fetch(`/olhc/${coin}/${currency}/${period}`)
-            const response = await request.json()
-            setCoinData(response)
+            const data = await fetch(
+                `${COIN_RANKING_API}/coin/${coin}/ohlc?referenceCurrencyUuid=${currency}&interval=${period}&limit=${100}`,
+                {
+                    headers,
+                }
+            )
+                .then((content) => content.json())
+                .then(({ data: { ohlc } }) => {
+                    let obj = { x: [], close: [], high: [], low: [], open: [] }
+                    ohlc.slice()
+                        .reverse()
+                        .forEach(({ startingAt, open, high, low, close }) => {
+                            obj.x.push(new Date(+startingAt * 1000))
+                            obj.open.push(+open)
+                            obj.high.push(+high)
+                            obj.low.push(+low)
+                            obj.close.push(+close)
+                        })
+                    return obj
+                })
+            setCoinData(data)
         }
 
         getHistoricData()
