@@ -274,7 +274,6 @@ const Graph = () => {
 
             const interval = setInterval(() => {
                 refetchData()
-                console.log('get new data')
             }, 60 * 1000)
 
             return () => clearInterval(interval)
@@ -409,6 +408,56 @@ const Graph = () => {
         }
     }
 
+    const loadIndicatorsList = () => {
+        return indicators.map((indicator) => {
+            return (
+                <div>
+                    <p>
+                        {indicator}
+                        <button
+                            type="button"
+                            value={indicator}
+                            onClick={(e) => {
+                                setIndicators(
+                                    indicators.filter(
+                                        (item) => item !== e.target.value
+                                    )
+                                )
+                            }}
+                        >
+                            X
+                        </button>
+                    </p>
+                </div>
+            )
+        })
+    }
+
+    const loadSignalsList = () => {
+        return signals.map((signal) => {
+            return (
+                <div>
+                    <p>
+                        {signal}
+                        <button
+                            type="button"
+                            value={signal}
+                            onClick={(e) => {
+                                setSignals(
+                                    signals.filter(
+                                        (item) => item !== e.target.value
+                                    )
+                                )
+                            }}
+                        >
+                            X
+                        </button>
+                    </p>
+                </div>
+            )
+        })
+    }
+
     return (
         <div>
             <h1>Coin prices</h1>
@@ -500,6 +549,20 @@ const Graph = () => {
                         <br />
                         <button type="submit">Calculate Signal</button>
                     </form>
+                </div>
+            )}
+
+            {indicators.length > 0 && (
+                <div>
+                    <h4>Indicator</h4>
+                    {loadIndicatorsList()}
+                </div>
+            )}
+
+            {signals.length > 0 && (
+                <div>
+                    <h4>Signals</h4>
+                    {loadSignalsList()}
                 </div>
             )}
         </div>
